@@ -88,74 +88,6 @@ function initSlideFromLeft() {
 
 initSlideFromLeft();
 
-function initScrollFloat() {
-  const elements = document.querySelectorAll("[data-scroll-float]");
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function splitTextNodes(element) {
-    const originalText = element.textContent.replace(/\s+/g, " ").trim();
-    let characterIndex = 0;
-
-    function splitNode(node) {
-      [...node.childNodes].forEach((child) => {
-        if (child.nodeType === Node.TEXT_NODE) {
-          const fragment = document.createDocumentFragment();
-
-          child.textContent.split(/(\s+)/).forEach((token) => {
-            if (!token) return;
-
-            if (/^\s+$/.test(token)) {
-              fragment.appendChild(document.createTextNode(" "));
-              return;
-            }
-
-            const word = document.createElement("span");
-            word.className = "scroll-float-word";
-            word.setAttribute("aria-hidden", "true");
-
-            [...token].forEach((character) => {
-              const span = document.createElement("span");
-              span.className = "scroll-float-char";
-              span.style.setProperty("--char-index", characterIndex);
-              span.textContent = character;
-              word.appendChild(span);
-              characterIndex += 1;
-            });
-
-            fragment.appendChild(word);
-          });
-
-          child.replaceWith(fragment);
-        } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== "BR") {
-          splitNode(child);
-        }
-      });
-    }
-
-    element.setAttribute("aria-label", originalText);
-    splitNode(element);
-  }
-
-  elements.forEach(splitTextNodes);
-
-  if (reduceMotion) {
-    elements.forEach((element) => element.classList.add("scroll-float-visible"));
-    return;
-  }
-
-  const floatObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("scroll-float-visible");
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.3, rootMargin: "0px 0px -8%" });
-
-  elements.forEach((element) => floatObserver.observe(element));
-}
-
-initScrollFloat();
-
 function initCountUp() {
   const counters = document.querySelectorAll("[data-count-to]");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -284,3 +216,4 @@ function initClickSpark() {
 }
 
 initClickSpark();
+
