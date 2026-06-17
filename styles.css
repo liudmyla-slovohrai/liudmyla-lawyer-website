@@ -125,24 +125,6 @@ h2 { margin-bottom: 30px; font-size: clamp(45px,5vw,68px); }
 .about-facts div { display: flex; gap: 16px; }
 .about-facts span { color: var(--gold); font: 500 23px/1 var(--serif); }
 .about-facts p { margin: 0; font-size: 12px; line-height: 1.6; text-transform: uppercase; letter-spacing: .08em; }
-[data-scroll-float] { overflow: hidden; }
-.scroll-float-word { display: inline-block; white-space: nowrap; }
-.scroll-float-char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(110%) scale(.72, 1.85);
-  transform-origin: 50% 0%;
-  will-change: opacity, transform;
-  transition:
-    opacity .45s ease,
-    transform .65s cubic-bezier(.34, 1.56, .64, 1);
-  transition-delay: calc(var(--char-index) * 8ms);
-}
-[data-scroll-float].scroll-float-visible .scroll-float-char {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
 .clients { background: var(--cream); }
 .section-heading { max-width: 670px; margin: 0 auto 62px; text-align: center; }
 .section-heading .eyebrow { justify-content: center; }
@@ -324,6 +306,6 @@ footer { padding: 32px 0; background: #0e0e0c; color: rgba(255,255,255,.52); bor
   .reveal { opacity: 1; transform: none; }
   .shiny-text { background: none; -webkit-text-fill-color: #fff; color: #fff; }
   .gradient-gold-text { background: none; -webkit-text-fill-color: var(--gold-light); color: var(--gold-light); }
-  .scroll-float-char { opacity: 1; transform: none; }
   .slide-from-left { opacity: 1; transform: none; filter: none; }
 }
+
