@@ -1,4 +1,4 @@
-const header = document.querySelector("[data-header]");
+﻿const header = document.querySelector("[data-header]");
 const menuButton = document.querySelector(".menu-toggle");
 const navigation = document.querySelector(".main-nav");
 const navLinks = [...document.querySelectorAll('.main-nav a[href^="#"]')];
@@ -59,9 +59,8 @@ document.querySelectorAll("details").forEach((item) => {
 });
 
 document.querySelector("[data-contact-form]").addEventListener("submit", (event) => {
-  event.preventDefault();
   const note = document.querySelector("[data-form-note]");
-  note.textContent = "Дякую! Форма готова до підключення вашої пошти або CRM.";
+  note.textContent = "Надсилаємо запит на пошту...";
   note.classList.add("success");
 });
 

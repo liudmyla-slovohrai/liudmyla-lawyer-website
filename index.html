@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -7,14 +7,14 @@
   <meta name="description" content="Юридичний супровід управляючих компаній, ОСББ та забудовників. 15+ років досвіду. Київ та онлайн по Україні.">
   <meta property="og:title" content="Людмила — юрист для бізнесу у сфері нерухомості">
   <meta property="og:description" content="Господарське, житлове та договірне право. Від консультації до захисту у суді.">
-  <meta property="og:image" content="ChatGPT Image 11 черв. 2026 р., 17_07_25.png">
+  <meta property="og:image" content="assets/liudmyla-lawyer.png">
   <meta property="og:type" content="website">
   <title>Людмила — юрист для управляючих компаній та забудовників | Київ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+  <script src="script.js?v=20260629-2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">До основного вмісту</a>
@@ -70,7 +70,7 @@
       <div class="container about-grid">
         <div class="about-visual reveal">
           <div class="image-frame">
-            <img src="ChatGPT Image 11 черв. 2026 р., 17_07_25.png" alt="Юрист Людмила з ноутбуком у робочому кабінеті" width="1672" height="941">
+            <img src="assets/liudmyla-about-office.png" alt="Юрист Людмила в робочому кабінеті" width="1280" height="851">
           </div>
           <div class="experience-stamp"><strong data-count-to="15">0</strong><span>років<br>досвіду</span></div>
         </div>
@@ -187,14 +187,19 @@
             <p><small>Формат роботи</small><span>Київ · онлайн по Україні</span></p>
           </div>
         </div>
-        <form class="contact-form reveal" data-contact-form>
+        <form class="contact-form reveal" action="https://formsubmit.co/lyudmiladobshanska@ukr.net" method="POST" data-contact-form>
+          <input type="hidden" name="_subject" value="Запит на консультацію з сайту">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://liudmyla-lawyer-website.vercel.app/#contact">
+          <input class="hidden-honey" type="text" name="_honey" tabindex="-1" autocomplete="off">
+          <img class="contact-portrait-badge" src="assets/liudmyla-portrait-circle.png" alt="Портрет юриста Людмили" width="851" height="1280">
           <div class="field-row">
             <label>Ваше ім'я<input type="text" name="name" autocomplete="name" required></label>
             <label>Телефон<input type="tel" name="phone" autocomplete="tel" required></label>
           </div>
           <label>Коротко опишіть питання<textarea name="message" rows="4" required></textarea></label>
           <button class="button button-gold" type="submit">Надіслати запит <span>↗</span></button>
-          <p class="form-note" data-form-note>Натискаючи кнопку, ви погоджуєтеся на обробку наданих даних.</p>
+          <p class="form-note" data-form-note>Після натискання запит буде надіслано на пошту.</p>
         </form>
       </div>
     </section>
