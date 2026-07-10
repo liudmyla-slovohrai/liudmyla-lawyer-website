@@ -45,11 +45,11 @@ button, input, textarea { font: inherit; }
 .menu-toggle span { display: block; height: 1px; background: #fff; margin: 7px 0; transition: .25s; }
 
 .hero { --hero-x: 0px; --hero-y: 0px; --hero-tilt-x: 0deg; --hero-tilt-y: 0deg; --hero-glow-x: 50%; --hero-glow-y: 42%; --hero-mask-x: 63%; --hero-mask-y: 52%; --hero-bg-x: 58%; min-height: 760px; height: 100svh; position: relative; display: flex; align-items: center; overflow: hidden; padding: 94px 0 30px; background: #f0ede3; color: #173427; }
-.hero::before { content: ""; position: absolute; inset: 88px max(24px, calc((100vw - 1180px) / 2)) 28px; border-radius: 34px; background: radial-gradient(circle at var(--hero-glow-x) var(--hero-glow-y), rgba(255,255,255,.7), transparent 30%), #dfddd1; box-shadow: inset 0 1px rgba(255,255,255,.44), 0 30px 90px rgba(54,45,25,.1); transform: perspective(1200px) rotateX(var(--hero-tilt-x)) rotateY(var(--hero-tilt-y)); transform-origin: center; transition: transform .9s cubic-bezier(.16, 1, .3, 1), background .9s cubic-bezier(.16, 1, .3, 1); }
+.hero::before { content: none; }
 .hero-photo { position: absolute; z-index: 1; left: max(24px, calc((100vw - 1180px) / 2)); right: max(24px, calc((100vw - 1180px) / 2)); top: 17%; height: min(540px, 64vh); background: linear-gradient(90deg, rgba(223,221,209,.06) 0%, rgba(223,221,209,.22) 20%, rgba(223,221,209,.78) 82%, rgba(223,221,209,.95) 100%), url("assets/liudmyla-lawyer.png") var(--hero-bg-x) center / cover no-repeat; opacity: .82; transform: translate3d(calc(var(--hero-x) * .38), calc(var(--hero-y) * .28), 0) scale(1.02); clip-path: ellipse(49% 42% at var(--hero-mask-x) var(--hero-mask-y)); filter: saturate(.78) contrast(.96); transition: clip-path 1.05s cubic-bezier(.16, 1, .3, 1), transform 1s cubic-bezier(.16, 1, .3, 1), background-position 1.05s cubic-bezier(.16, 1, .3, 1), opacity .7s ease, filter .7s ease; will-change: transform, clip-path; }
 .hero:hover .hero-photo { opacity: .9; filter: saturate(.86) contrast(.98); }
-.hero-shade { position: absolute; z-index: 1; left: max(24px, calc((100vw - 1180px) / 2)); right: max(24px, calc((100vw - 1180px) / 2)); top: 13%; height: min(600px, 70vh); border-radius: 48% 52% 47% 53% / 42% 48% 52% 58%; background: radial-gradient(ellipse at var(--hero-mask-x) var(--hero-mask-y), rgba(255,255,255,.58), transparent 42%), linear-gradient(90deg, rgba(223,221,209,.02), rgba(223,221,209,.82) 78%, #dfddd1); filter: blur(15px); opacity: .92; pointer-events: none; transform: translate3d(calc(var(--hero-x) * .22), calc(var(--hero-y) * .18), 0); transition: transform 1.15s cubic-bezier(.16, 1, .3, 1), background .9s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
-.hero-shade::after { content: ""; position: absolute; inset: 8% -3% 0 46%; background: linear-gradient(90deg, transparent, #dfddd1 72%); }
+.hero-shade { position: absolute; z-index: 1; left: max(24px, calc((100vw - 1180px) / 2)); right: max(24px, calc((100vw - 1180px) / 2)); top: 13%; height: min(600px, 70vh); border-radius: 48% 52% 47% 53% / 42% 48% 52% 58%; background: radial-gradient(ellipse at var(--hero-mask-x) var(--hero-mask-y), rgba(255,255,255,.72), transparent 40%), radial-gradient(ellipse at var(--hero-glow-x) var(--hero-glow-y), rgba(223,221,209,.74), transparent 62%); filter: blur(18px); opacity: .9; pointer-events: none; transform: translate3d(calc(var(--hero-x) * .22), calc(var(--hero-y) * .18), 0); transition: transform 1.15s cubic-bezier(.16, 1, .3, 1), background .9s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
+.hero-shade::after { content: ""; position: absolute; inset: 8% -3% 0 46%; background: linear-gradient(90deg, transparent, rgba(240,237,227,.82) 72%); }
 .hero-inner { position: relative; z-index: 2; min-height: min(620px, calc(100svh - 140px)); display: flex; align-items: center; padding-top: 38px; }
 .hero-copy { max-width: 760px; padding-left: clamp(18px, 4vw, 48px); transform: translate3d(calc(var(--hero-x) * -.18), calc(var(--hero-y) * -.14), 0); transition: transform 1s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
 .hero-profile { display: flex; align-items: center; gap: 14px; margin: 0 0 36px; }
@@ -247,7 +247,6 @@ footer { padding: 32px 0; background: #0e0e0c; color: rgba(255,255,255,.52); bor
   .main-nav.open { opacity: 1; visibility: visible; }
   .nav-cta { margin-top: 8px; font: 600 11px var(--sans); }
   .hero { padding-top: 88px; }
-  .hero::before { inset: 78px 20px 24px; border-radius: 28px; }
   .hero-photo { left: 20px; right: 20px; top: 22%; width: auto; height: 48vh; background-position: var(--hero-bg-x) center; clip-path: ellipse(54% 39% at var(--hero-mask-x) var(--hero-mask-y)); }
   .hero-shade { left: 14px; right: 14px; top: 19%; width: auto; height: 54vh; background: radial-gradient(ellipse at var(--hero-mask-x) var(--hero-mask-y), rgba(255,255,255,.56), transparent 44%), linear-gradient(90deg, rgba(223,221,209,.05), rgba(223,221,209,.92) 76%, #dfddd1); }
   .hero-copy { max-width: 650px; padding-left: 26px; }
@@ -274,7 +273,6 @@ footer { padding: 32px 0; background: #0e0e0c; color: rgba(255,255,255,.52); bor
   .lang-toggle { min-height: 32px; padding: 0 8px; font-size: 9px; }
   .brand small { display: none; }
   .hero { min-height: 720px; height: 100svh; align-items: center; padding: 76px 0 20px; }
-  .hero::before { inset: 70px 14px 18px; border-radius: 24px; }
   .hero-photo { left: -28px; right: -28px; top: 31%; width: auto; height: 38vh; background-position: 54% center; clip-path: ellipse(58% 39% at 56% 52%); opacity: .74; transform: none; }
   .hero-shade { left: -36px; right: -36px; top: 27%; width: auto; height: 45vh; filter: blur(12px); transform: none; }
   .hero-inner { min-height: calc(100svh - 108px); padding-top: 14px; }
