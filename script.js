@@ -375,7 +375,7 @@ function initHeroHoverMotion() {
   const hero = document.querySelector(".hero");
   if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const target = { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42, maskX: 63, maskY: 52, bgX: 58 };
+  const target = { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42, cursorX: 50, cursorY: 45, bgX: 58 };
   const current = { ...target };
   let frame = 0;
 
@@ -386,8 +386,8 @@ function initHeroHoverMotion() {
     current.tiltY += (target.tiltY - current.tiltY) * 0.08;
     current.glowX += (target.glowX - current.glowX) * 0.08;
     current.glowY += (target.glowY - current.glowY) * 0.08;
-    current.maskX += (target.maskX - current.maskX) * 0.08;
-    current.maskY += (target.maskY - current.maskY) * 0.08;
+    current.cursorX += (target.cursorX - current.cursorX) * 0.08;
+    current.cursorY += (target.cursorY - current.cursorY) * 0.08;
     current.bgX += (target.bgX - current.bgX) * 0.08;
 
     hero.style.setProperty("--hero-x", `${current.x.toFixed(2)}px`);
@@ -396,8 +396,8 @@ function initHeroHoverMotion() {
     hero.style.setProperty("--hero-tilt-y", `${current.tiltY.toFixed(3)}deg`);
     hero.style.setProperty("--hero-glow-x", `${current.glowX.toFixed(2)}%`);
     hero.style.setProperty("--hero-glow-y", `${current.glowY.toFixed(2)}%`);
-    hero.style.setProperty("--hero-mask-x", `${current.maskX.toFixed(2)}%`);
-    hero.style.setProperty("--hero-mask-y", `${current.maskY.toFixed(2)}%`);
+    hero.style.setProperty("--hero-cursor-x", `${current.cursorX.toFixed(2)}%`);
+    hero.style.setProperty("--hero-cursor-y", `${current.cursorY.toFixed(2)}%`);
     hero.style.setProperty("--hero-bg-x", `${current.bgX.toFixed(2)}%`);
 
     frame = requestAnimationFrame(render);
@@ -415,13 +415,13 @@ function initHeroHoverMotion() {
     target.tiltY = x * 1.8;
     target.glowX = 50 + x * 18;
     target.glowY = 42 + y * 14;
-    target.maskX = 63 + x * 10;
-    target.maskY = 52 + y * 8;
+    target.cursorX = ((event.clientX - rect.left) / rect.width) * 100;
+    target.cursorY = ((event.clientY - rect.top) / rect.height) * 100;
     target.bgX = 58 + x * 3;
   }, { passive: true });
 
   hero.addEventListener("pointerleave", () => {
-    Object.assign(target, { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42, maskX: 63, maskY: 52, bgX: 58 });
+    Object.assign(target, { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42, cursorX: 50, cursorY: 45, bgX: 58 });
   });
 
   frame = requestAnimationFrame(render);
