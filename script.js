@@ -24,6 +24,8 @@ const translations = {
     navProcess: "Як я працюю",
     navContact: "Зв'язатися",
     heroPhotoLabel: "Юрист Людмила в сучасному офісі",
+    heroProfileName: "Людмила",
+    heroProfileRole: "Юрист · нерухомість · бізнес",
     heroEyebrow: "Юрист <i></i> Київ <i></i> 15+ років досвіду",
     heroTitle: '<span class="shiny-text">Правовий захист<br>для бізнесу у сфері</span><br><em class="gradient-gold-text">нерухомості</em>',
     heroLead: "Юридичний супровід управляючих компаній, ОСББ та забудовників. Від точного аналізу до захисту в суді.",
@@ -105,6 +107,8 @@ const translations = {
     navProcess: "Process",
     navContact: "Contact",
     heroPhotoLabel: "Lawyer Liudmyla in a modern office",
+    heroProfileName: "Liudmyla",
+    heroProfileRole: "Lawyer · real estate · business",
     heroEyebrow: "Lawyer <i></i> Kyiv <i></i> 15+ years of experience",
     heroTitle: '<span class="shiny-text">Legal protection<br>for real estate</span><br><em class="gradient-gold-text">business</em>',
     heroLead: "Legal support for property management companies, HOAs and developers. From precise analysis to court protection.",
@@ -233,6 +237,9 @@ function applyLanguage(language) {
   setText('.main-nav a[href="#process"]', "navProcess");
   setText('.main-nav a[href="#contact"]', "navContact");
   setAttr(".hero-photo", "aria-label", "heroPhotoLabel");
+  setAttr(".hero-profile img", "alt", "portraitAlt");
+  setText(".hero-profile strong", "heroProfileName");
+  setText(".hero-profile span", "heroProfileRole");
   setHTML(".hero-copy .eyebrow", "heroEyebrow");
   setHTML("#hero-title", "heroTitle");
   setText(".hero-lead", "heroLead");
