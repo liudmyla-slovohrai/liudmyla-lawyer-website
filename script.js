@@ -371,6 +371,56 @@ const sectionObserver = new IntersectionObserver((entries) => {
 
 sections.forEach((section) => sectionObserver.observe(section));
 
+function initHeroHoverMotion() {
+  const hero = document.querySelector(".hero");
+  if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const target = { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42 };
+  const current = { ...target };
+  let frame = 0;
+
+  function render() {
+    current.x += (target.x - current.x) * 0.08;
+    current.y += (target.y - current.y) * 0.08;
+    current.tiltX += (target.tiltX - current.tiltX) * 0.08;
+    current.tiltY += (target.tiltY - current.tiltY) * 0.08;
+    current.glowX += (target.glowX - current.glowX) * 0.08;
+    current.glowY += (target.glowY - current.glowY) * 0.08;
+
+    hero.style.setProperty("--hero-x", `${current.x.toFixed(2)}px`);
+    hero.style.setProperty("--hero-y", `${current.y.toFixed(2)}px`);
+    hero.style.setProperty("--hero-tilt-x", `${current.tiltX.toFixed(3)}deg`);
+    hero.style.setProperty("--hero-tilt-y", `${current.tiltY.toFixed(3)}deg`);
+    hero.style.setProperty("--hero-glow-x", `${current.glowX.toFixed(2)}%`);
+    hero.style.setProperty("--hero-glow-y", `${current.glowY.toFixed(2)}%`);
+
+    frame = requestAnimationFrame(render);
+  }
+
+  hero.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    const rect = hero.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+
+    target.x = x * 28;
+    target.y = y * 20;
+    target.tiltX = y * -1.4;
+    target.tiltY = x * 1.8;
+    target.glowX = 50 + x * 18;
+    target.glowY = 42 + y * 14;
+  }, { passive: true });
+
+  hero.addEventListener("pointerleave", () => {
+    Object.assign(target, { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42 });
+  });
+
+  frame = requestAnimationFrame(render);
+  window.addEventListener("beforeunload", () => cancelAnimationFrame(frame), { once: true });
+}
+
+initHeroHoverMotion();
+
 document.querySelectorAll("details").forEach((item) => {
   item.addEventListener("toggle", () => {
     if (!item.open) return;
