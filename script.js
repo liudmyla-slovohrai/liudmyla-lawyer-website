@@ -387,11 +387,27 @@ function initHeroHoverMotion() {
   const photoContext = photoCanvas.getContext("2d");
   if (!maskContext || !photoContext) return;
 
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const target = { cursorX: 50, cursorY: 45, x: 0, y: 0 };
   const current = { ...target };
   const pointer = { active: false, x: 0, y: 0, lastX: 0, lastY: 0 };
-  const splashes = [];
+  const fluidCanvas = document.createElement("canvas");
+  fluidCanvas.className = "hero-fluid-source";
+  fluidCanvas.setAttribute("aria-hidden", "true");
+  document.body.appendChild(fluidCanvas);
+  const stopFluid = window.createReactBitsSplashCursor
+    ? window.createReactBitsSplashCursor(fluidCanvas, {
+      DENSITY_DISSIPATION: 2.6,
+      VELOCITY_DISSIPATION: 1.8,
+      PRESSURE: 0.1,
+      PRESSURE_ITERATIONS: 20,
+      CURL: 4,
+      SPLAT_RADIUS: 0.24,
+      SPLAT_FORCE: 6500,
+      SHADING: true,
+      RAINBOW_MODE: false,
+      COLOR: "#ffffff"
+    })
+    : null;
   let rect = hero.getBoundingClientRect();
   let pixelRatio = 1;
   let frame = 0;
@@ -460,63 +476,6 @@ function initHeroHoverMotion() {
     photoContext.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
   }
 
-  function paintSoftSpot(spot) {
-    const gradient = maskContext.createRadialGradient(spot.x, spot.y, spot.radius * 0.05, spot.x, spot.y, spot.radius);
-    gradient.addColorStop(0, `rgba(255,255,255,${0.95 * spot.alpha})`);
-    gradient.addColorStop(0.42, `rgba(255,255,255,${0.7 * spot.alpha})`);
-    gradient.addColorStop(0.72, `rgba(255,255,255,${0.26 * spot.alpha})`);
-    gradient.addColorStop(1, "rgba(255,255,255,0)");
-    maskContext.fillStyle = gradient;
-    maskContext.beginPath();
-    maskContext.arc(spot.x, spot.y, spot.radius, 0, Math.PI * 2);
-    maskContext.fill();
-  }
-
-  function addRevealSplash(x, y, dx, dy) {
-    const speed = Math.hypot(dx, dy);
-    const angle = speed > 0.5 ? Math.atan2(dy, dx) : -0.2;
-    const baseRadius = clamp(42 + speed * 0.55, 46, 118);
-    const sideAngle = angle + Math.PI / 2;
-    const pull = clamp(speed * 0.55, 8, 58);
-    const spots = [
-      { offset: 0, side: 0, radius: 1, alpha: 1, drift: 0.08 },
-      { offset: -pull * 0.8, side: -baseRadius * 0.34, radius: 0.62, alpha: 0.78, drift: 0.13 },
-      { offset: -pull * 1.35, side: baseRadius * 0.22, radius: 0.48, alpha: 0.68, drift: 0.17 },
-      { offset: -pull * 1.9, side: -baseRadius * 0.08, radius: 0.34, alpha: 0.52, drift: 0.22 },
-      { offset: pull * 0.38, side: baseRadius * 0.3, radius: 0.38, alpha: 0.48, drift: 0.1 },
-      { offset: pull * 0.22, side: -baseRadius * 0.46, radius: 0.3, alpha: 0.42, drift: 0.09 }
-    ];
-
-    spots.forEach((spot, index) => {
-      const px = x + Math.cos(angle) * spot.offset + Math.cos(sideAngle) * spot.side;
-      const py = y + Math.sin(angle) * spot.offset + Math.sin(sideAngle) * spot.side;
-      splashes.push({
-        x: px,
-        y: py,
-        radius: baseRadius * spot.radius,
-        alpha: spot.alpha,
-        life: 1,
-        vx: Math.cos(angle) * spot.drift * speed * (index < 4 ? -1 : 0.5),
-        vy: Math.sin(angle) * spot.drift * speed * (index < 4 ? -1 : 0.5)
-      });
-    });
-
-    if (splashes.length > 120) splashes.splice(0, splashes.length - 120);
-  }
-
-  function paintRevealSplash() {
-    for (let index = splashes.length - 1; index >= 0; index -= 1) {
-      const spot = splashes[index];
-      paintSoftSpot(spot);
-      spot.x += spot.vx;
-      spot.y += spot.vy;
-      spot.radius *= 1.006;
-      spot.life -= 0.028;
-      spot.alpha = Math.max(0, spot.alpha * 0.965);
-      if (spot.life <= 0 || spot.alpha <= 0.03) splashes.splice(index, 1);
-    }
-  }
-
   function render() {
     current.cursorX += (target.cursorX - current.cursorX) * 0.1;
     current.cursorY += (target.cursorY - current.cursorY) * 0.1;
@@ -528,20 +487,22 @@ function initHeroHoverMotion() {
     hero.style.setProperty("--hero-x", `${current.x.toFixed(2)}px`);
     hero.style.setProperty("--hero-y", `${current.y.toFixed(2)}px`);
 
-    maskContext.globalCompositeOperation = "destination-out";
-    maskContext.fillStyle = pointer.active ? "rgba(0,0,0,.022)" : "rgba(0,0,0,.055)";
-    maskContext.fillRect(0, 0, rect.width, rect.height);
-    maskContext.globalCompositeOperation = "source-over";
+    maskContext.clearRect(0, 0, rect.width, rect.height);
+    if (fluidCanvas.width && fluidCanvas.height) {
+      const fluidScaleX = fluidCanvas.width / (fluidCanvas.clientWidth || window.innerWidth || 1);
+      const fluidScaleY = fluidCanvas.height / (fluidCanvas.clientHeight || window.innerHeight || 1);
+      const sourceX = Math.max(0, rect.left * fluidScaleX);
+      const sourceY = Math.max(0, rect.top * fluidScaleY);
+      const sourceWidth = Math.min(fluidCanvas.width - sourceX, rect.width * fluidScaleX);
+      const sourceHeight = Math.min(fluidCanvas.height - sourceY, rect.height * fluidScaleY);
 
-    if (pointer.active) {
-      const dx = pointer.x - pointer.lastX;
-      const dy = pointer.y - pointer.lastY;
-      pointer.lastX += (pointer.x - pointer.lastX) * 0.2;
-      pointer.lastY += (pointer.y - pointer.lastY) * 0.2;
-      addRevealSplash(pointer.x, pointer.y, dx, dy);
+      if (sourceWidth > 0 && sourceHeight > 0) {
+        maskContext.globalCompositeOperation = "source-over";
+        for (let pass = 0; pass < 8; pass += 1) {
+          maskContext.drawImage(fluidCanvas, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, rect.width, rect.height);
+        }
+      }
     }
-
-    paintRevealSplash();
 
     context.clearRect(0, 0, rect.width, rect.height);
     context.drawImage(photoCanvas, 0, 0, rect.width, rect.height);
@@ -588,7 +549,11 @@ function initHeroHoverMotion() {
     resizeCanvas();
     renderPhotoLayer();
   }, { passive: true });
-  window.addEventListener("beforeunload", () => cancelAnimationFrame(frame), { once: true });
+  window.addEventListener("beforeunload", () => {
+    cancelAnimationFrame(frame);
+    if (typeof stopFluid === "function") stopFluid();
+    fluidCanvas.remove();
+  }, { once: true });
 }
 
 initHeroHoverMotion();
