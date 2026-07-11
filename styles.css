@@ -50,8 +50,7 @@ button, input, textarea { font: inherit; }
 .hero-photo { display: none; }
 .hero-reveal-canvas { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; opacity: 0; pointer-events: none; filter: saturate(.92) contrast(1); transition: opacity .32s ease; will-change: opacity; }
 .hero.is-revealing .hero-reveal-canvas { opacity: .96; }
-.hero-shade { position: absolute; inset: 0; z-index: 1; background: radial-gradient(ellipse 28% 18% at var(--hero-cursor-x) var(--hero-cursor-y), rgba(255,255,255,.58) 0 24%, rgba(255,255,255,.2) 48%, transparent 72%); filter: blur(20px); opacity: 0; pointer-events: none; transition: opacity .28s ease, background .65s cubic-bezier(.16, 1, .3, 1); will-change: opacity; }
-.hero.is-revealing .hero-shade { opacity: .74; }
+.hero-shade { display: none; }
 .hero-shade::after { content: none; }
 .hero-inner { position: relative; z-index: 2; min-height: min(620px, calc(100svh - 140px)); display: flex; align-items: center; padding-top: 38px; }
 .hero-copy { max-width: 760px; padding-left: clamp(18px, 4vw, 48px); }

@@ -391,6 +391,7 @@ function initHeroHoverMotion() {
   const target = { cursorX: 50, cursorY: 45, x: 0, y: 0 };
   const current = { ...target };
   const pointer = { active: false, x: 0, y: 0, lastX: 0, lastY: 0 };
+  const splashes = [];
   let rect = hero.getBoundingClientRect();
   let pixelRatio = 1;
   let frame = 0;
@@ -459,29 +460,61 @@ function initHeroHoverMotion() {
     photoContext.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
   }
 
-  function paintRevealSlash() {
-    const dx = pointer.x - pointer.lastX;
-    const dy = pointer.y - pointer.lastY;
-    const speed = Math.hypot(dx, dy);
-    const angle = speed > 0.8 ? Math.atan2(dy, dx) : -0.22;
-    const length = clamp(rect.width * 0.42 + speed * 9, 260, 760);
-    const thickness = clamp(rect.height * 0.15 + speed * 1.7, 105, 230);
-
-    maskContext.save();
-    maskContext.translate(pointer.x, pointer.y);
-    maskContext.rotate(angle - 0.16);
-    maskContext.scale(length / thickness, 1);
-
-    const gradient = maskContext.createRadialGradient(0, 0, thickness * 0.05, 0, 0, thickness * 0.5);
-    gradient.addColorStop(0, "rgba(255,255,255,.98)");
-    gradient.addColorStop(0.45, "rgba(255,255,255,.72)");
-    gradient.addColorStop(0.72, "rgba(255,255,255,.24)");
+  function paintSoftSpot(spot) {
+    const gradient = maskContext.createRadialGradient(spot.x, spot.y, spot.radius * 0.05, spot.x, spot.y, spot.radius);
+    gradient.addColorStop(0, `rgba(255,255,255,${0.95 * spot.alpha})`);
+    gradient.addColorStop(0.42, `rgba(255,255,255,${0.7 * spot.alpha})`);
+    gradient.addColorStop(0.72, `rgba(255,255,255,${0.26 * spot.alpha})`);
     gradient.addColorStop(1, "rgba(255,255,255,0)");
     maskContext.fillStyle = gradient;
     maskContext.beginPath();
-    maskContext.arc(0, 0, thickness * 0.5, 0, Math.PI * 2);
+    maskContext.arc(spot.x, spot.y, spot.radius, 0, Math.PI * 2);
     maskContext.fill();
-    maskContext.restore();
+  }
+
+  function addRevealSplash(x, y, dx, dy) {
+    const speed = Math.hypot(dx, dy);
+    const angle = speed > 0.5 ? Math.atan2(dy, dx) : -0.2;
+    const baseRadius = clamp(42 + speed * 0.55, 46, 118);
+    const sideAngle = angle + Math.PI / 2;
+    const pull = clamp(speed * 0.55, 8, 58);
+    const spots = [
+      { offset: 0, side: 0, radius: 1, alpha: 1, drift: 0.08 },
+      { offset: -pull * 0.8, side: -baseRadius * 0.34, radius: 0.62, alpha: 0.78, drift: 0.13 },
+      { offset: -pull * 1.35, side: baseRadius * 0.22, radius: 0.48, alpha: 0.68, drift: 0.17 },
+      { offset: -pull * 1.9, side: -baseRadius * 0.08, radius: 0.34, alpha: 0.52, drift: 0.22 },
+      { offset: pull * 0.38, side: baseRadius * 0.3, radius: 0.38, alpha: 0.48, drift: 0.1 },
+      { offset: pull * 0.22, side: -baseRadius * 0.46, radius: 0.3, alpha: 0.42, drift: 0.09 }
+    ];
+
+    spots.forEach((spot, index) => {
+      const px = x + Math.cos(angle) * spot.offset + Math.cos(sideAngle) * spot.side;
+      const py = y + Math.sin(angle) * spot.offset + Math.sin(sideAngle) * spot.side;
+      splashes.push({
+        x: px,
+        y: py,
+        radius: baseRadius * spot.radius,
+        alpha: spot.alpha,
+        life: 1,
+        vx: Math.cos(angle) * spot.drift * speed * (index < 4 ? -1 : 0.5),
+        vy: Math.sin(angle) * spot.drift * speed * (index < 4 ? -1 : 0.5)
+      });
+    });
+
+    if (splashes.length > 120) splashes.splice(0, splashes.length - 120);
+  }
+
+  function paintRevealSplash() {
+    for (let index = splashes.length - 1; index >= 0; index -= 1) {
+      const spot = splashes[index];
+      paintSoftSpot(spot);
+      spot.x += spot.vx;
+      spot.y += spot.vy;
+      spot.radius *= 1.006;
+      spot.life -= 0.028;
+      spot.alpha = Math.max(0, spot.alpha * 0.965);
+      if (spot.life <= 0 || spot.alpha <= 0.03) splashes.splice(index, 1);
+    }
   }
 
   function render() {
@@ -501,10 +534,14 @@ function initHeroHoverMotion() {
     maskContext.globalCompositeOperation = "source-over";
 
     if (pointer.active) {
+      const dx = pointer.x - pointer.lastX;
+      const dy = pointer.y - pointer.lastY;
       pointer.lastX += (pointer.x - pointer.lastX) * 0.2;
       pointer.lastY += (pointer.y - pointer.lastY) * 0.2;
-      paintRevealSlash();
+      addRevealSplash(pointer.x, pointer.y, dx, dy);
     }
+
+    paintRevealSplash();
 
     context.clearRect(0, 0, rect.width, rect.height);
     context.drawImage(photoCanvas, 0, 0, rect.width, rect.height);
