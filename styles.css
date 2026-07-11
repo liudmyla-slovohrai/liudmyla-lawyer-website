@@ -44,17 +44,17 @@ button, input, textarea { font: inherit; }
 .menu-toggle { display: none; border: 0; background: transparent; width: 44px; height: 44px; padding: 12px 7px; }
 .menu-toggle span { display: block; height: 1px; background: #fff; margin: 7px 0; transition: .25s; }
 
-.hero { --hero-x: 0px; --hero-y: 0px; --hero-tilt-x: 0deg; --hero-tilt-y: 0deg; --hero-glow-x: 50%; --hero-glow-y: 42%; --hero-cursor-x: 50%; --hero-cursor-y: 45%; --hero-bg-x: 58%; min-height: 760px; height: 100svh; position: relative; display: flex; align-items: center; overflow: hidden; padding: 94px 0 30px; background: #f0ede3; color: #173427; }
+.hero { --hero-x: 0px; --hero-y: 0px; --hero-tilt-x: 0deg; --hero-tilt-y: 0deg; --hero-glow-x: 50%; --hero-glow-y: 42%; --hero-cursor-x: 50%; --hero-cursor-y: 45%; min-height: 760px; height: 100svh; position: relative; display: flex; align-items: center; overflow: hidden; padding: 94px 0 30px; background: #f0ede3; color: #173427; }
 .hero::before { content: none; }
 .hero::after { content: ""; position: absolute; z-index: 4; left: var(--hero-cursor-x); top: var(--hero-cursor-y); width: 0; height: 0; border-style: solid; border-width: 0 10px 17px 10px; border-color: transparent transparent #173427 transparent; opacity: 0; pointer-events: none; transform: translate(-4px,-4px) rotate(-42deg); transition: opacity .25s ease, left .9s cubic-bezier(.16, 1, .3, 1), top .9s cubic-bezier(.16, 1, .3, 1); filter: drop-shadow(0 6px 10px rgba(23,52,39,.2)); }
 .hero:hover::after { opacity: .9; }
-.hero-photo { position: absolute; z-index: 1; left: var(--hero-cursor-x); top: var(--hero-cursor-y); width: min(760px, 62vw); height: min(235px, 25vh); border-radius: 999px; background: linear-gradient(90deg, rgba(240,237,227,.02) 0%, rgba(240,237,227,.08) 18%, rgba(240,237,227,.26) 82%, rgba(240,237,227,.48) 100%), url("assets/liudmyla-lawyer.png") var(--hero-bg-x) center / min(1180px, 100vw) auto no-repeat; opacity: 0; transform: translate(-50%, -50%) translate3d(calc(var(--hero-x) * .34), calc(var(--hero-y) * .24), 0) rotate(-8deg) scale(1.02); filter: saturate(.86) contrast(.98); mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.08) 8%, rgba(0,0,0,.9) 24%, #000 50%, rgba(0,0,0,.9) 76%, rgba(0,0,0,.08) 92%, transparent 100%), radial-gradient(ellipse at center, #000 0 46%, rgba(0,0,0,.6) 66%, transparent 78%); mask-composite: intersect; -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.08) 8%, rgba(0,0,0,.9) 24%, #000 50%, rgba(0,0,0,.9) 76%, rgba(0,0,0,.08) 92%, transparent 100%), radial-gradient(ellipse at center, #000 0 46%, rgba(0,0,0,.6) 66%, transparent 78%); -webkit-mask-composite: source-in; transition: left .9s cubic-bezier(.16, 1, .3, 1), top .9s cubic-bezier(.16, 1, .3, 1), transform 1s cubic-bezier(.16, 1, .3, 1), background-position 1.05s cubic-bezier(.16, 1, .3, 1), opacity .45s ease, filter .7s ease; will-change: left, top, transform, opacity; }
+.hero-photo { position: absolute; z-index: 1; left: max(24px, calc((100vw - 1180px) / 2)); right: max(24px, calc((100vw - 1180px) / 2)); top: 17%; height: min(540px, 64vh); background: linear-gradient(90deg, rgba(240,237,227,.02) 0%, rgba(240,237,227,.08) 18%, rgba(240,237,227,.26) 82%, rgba(240,237,227,.48) 100%), url("assets/liudmyla-lawyer.png") 58% center / cover no-repeat; opacity: 0; filter: saturate(.86) contrast(.98); mask-image: linear-gradient(98deg, transparent 0%, rgba(0,0,0,.04) calc(var(--hero-cursor-x) - 24%), rgba(0,0,0,.95) calc(var(--hero-cursor-x) - 11%), #000 var(--hero-cursor-x), rgba(0,0,0,.95) calc(var(--hero-cursor-x) + 11%), rgba(0,0,0,.04) calc(var(--hero-cursor-x) + 24%), transparent 100%); -webkit-mask-image: linear-gradient(98deg, transparent 0%, rgba(0,0,0,.04) calc(var(--hero-cursor-x) - 24%), rgba(0,0,0,.95) calc(var(--hero-cursor-x) - 11%), #000 var(--hero-cursor-x), rgba(0,0,0,.95) calc(var(--hero-cursor-x) + 11%), rgba(0,0,0,.04) calc(var(--hero-cursor-x) + 24%), transparent 100%); transition: opacity .45s ease, filter .7s ease; will-change: opacity; }
 .hero:hover .hero-photo { opacity: .95; filter: saturate(.9) contrast(1); }
-.hero-shade { position: absolute; z-index: 1; left: var(--hero-cursor-x); top: var(--hero-cursor-y); width: min(820px, 66vw); height: min(270px, 29vh); border-radius: 999px; background: rgba(255,255,255,.42); filter: blur(24px); opacity: 0; pointer-events: none; transform: translate(-50%, -50%) translate3d(calc(var(--hero-x) * .18), calc(var(--hero-y) * .15), 0) rotate(-8deg); transition: opacity .35s ease, left .9s cubic-bezier(.16, 1, .3, 1), top .9s cubic-bezier(.16, 1, .3, 1), transform 1.15s cubic-bezier(.16, 1, .3, 1); will-change: left, top, transform, opacity; }
+.hero-shade { position: absolute; z-index: 1; left: max(24px, calc((100vw - 1180px) / 2)); right: max(24px, calc((100vw - 1180px) / 2)); top: 17%; height: min(540px, 64vh); background: linear-gradient(98deg, transparent 0%, rgba(255,255,255,.04) calc(var(--hero-cursor-x) - 26%), rgba(255,255,255,.46) calc(var(--hero-cursor-x) - 12%), rgba(255,255,255,.58) var(--hero-cursor-x), rgba(255,255,255,.46) calc(var(--hero-cursor-x) + 12%), rgba(255,255,255,.04) calc(var(--hero-cursor-x) + 26%), transparent 100%); filter: blur(18px); opacity: 0; pointer-events: none; transition: opacity .35s ease, background .9s cubic-bezier(.16, 1, .3, 1); will-change: opacity; }
 .hero:hover .hero-shade { opacity: .9; }
 .hero-shade::after { content: none; }
 .hero-inner { position: relative; z-index: 2; min-height: min(620px, calc(100svh - 140px)); display: flex; align-items: center; padding-top: 38px; }
-.hero-copy { max-width: 760px; padding-left: clamp(18px, 4vw, 48px); transform: translate3d(calc(var(--hero-x) * -.18), calc(var(--hero-y) * -.14), 0); transition: transform 1s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
+.hero-copy { max-width: 760px; padding-left: clamp(18px, 4vw, 48px); }
 .hero-profile { display: flex; align-items: center; gap: 14px; margin: 0 0 36px; }
 .hero-profile img { width: 56px; height: 56px; border-radius: 17px; object-fit: cover; object-position: 50% 34%; border: 1px solid rgba(23,52,39,.12); box-shadow: 0 12px 28px rgba(23,52,39,.16); }
 .hero-profile p { margin: 0; color: rgba(23,52,39,.72); line-height: 1.25; }
@@ -250,8 +250,8 @@ footer { padding: 32px 0; background: #0e0e0c; color: rgba(255,255,255,.52); bor
   .main-nav.open { opacity: 1; visibility: visible; }
   .nav-cta { margin-top: 8px; font: 600 11px var(--sans); }
   .hero { padding-top: 88px; }
-  .hero-photo { width: min(650px, 78vw); height: min(205px, 24vh); background-position: var(--hero-bg-x) center; }
-  .hero-shade { width: min(700px, 84vw); height: min(235px, 28vh); }
+  .hero-photo { left: 20px; right: 20px; top: 22%; width: auto; height: 48vh; background-position: 58% center; }
+  .hero-shade { left: 20px; right: 20px; top: 22%; width: auto; height: 48vh; }
   .hero-copy { max-width: 650px; padding-left: 26px; }
   .hero-side-note { display: none; }
   .about-grid { grid-template-columns: 1fr; gap: 80px; }
@@ -277,8 +277,8 @@ footer { padding: 32px 0; background: #0e0e0c; color: rgba(255,255,255,.52); bor
   .brand small { display: none; }
   .hero { min-height: 720px; height: 100svh; align-items: center; padding: 76px 0 20px; }
   .hero::after { content: none; }
-  .hero-photo { left: 50%; top: 50%; width: 78vw; height: 150px; background-position: 54% center; opacity: 0; transform: translate(-50%, -50%) rotate(-8deg); }
-  .hero-shade { left: 50%; top: 50%; width: 84vw; height: 170px; filter: blur(12px); opacity: 0; transform: translate(-50%, -50%) rotate(-8deg); }
+  .hero-photo { left: -28px; right: -28px; top: 31%; width: auto; height: 38vh; background-position: 54% center; opacity: 0; transform: none; }
+  .hero-shade { left: -28px; right: -28px; top: 31%; width: auto; height: 38vh; filter: blur(12px); opacity: 0; transform: none; }
   .hero-inner { min-height: calc(100svh - 108px); padding-top: 14px; }
   .hero-copy { padding-left: 18px; padding-right: 18px; }
   .hero-profile { margin-bottom: 28px; }
