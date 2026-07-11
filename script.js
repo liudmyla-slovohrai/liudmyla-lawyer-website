@@ -374,54 +374,183 @@ sections.forEach((section) => sectionObserver.observe(section));
 function initHeroHoverMotion() {
   const hero = document.querySelector(".hero");
   if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const canvas = hero.querySelector(".hero-reveal-canvas");
+  const context = canvas ? canvas.getContext("2d") : null;
+  if (!canvas || !context) return;
 
-  const target = { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42, cursorX: 50, cursorY: 45 };
+  const image = new Image();
+  image.src = "assets/liudmyla-lawyer.png";
+
+  const maskCanvas = document.createElement("canvas");
+  const maskContext = maskCanvas.getContext("2d");
+  const photoCanvas = document.createElement("canvas");
+  const photoContext = photoCanvas.getContext("2d");
+  if (!maskContext || !photoContext) return;
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const target = { cursorX: 50, cursorY: 45, x: 0, y: 0 };
   const current = { ...target };
+  const pointer = { active: false, x: 0, y: 0, lastX: 0, lastY: 0 };
+  let rect = hero.getBoundingClientRect();
+  let pixelRatio = 1;
   let frame = 0;
 
-  function render() {
-    current.x += (target.x - current.x) * 0.08;
-    current.y += (target.y - current.y) * 0.08;
-    current.tiltX += (target.tiltX - current.tiltX) * 0.08;
-    current.tiltY += (target.tiltY - current.tiltY) * 0.08;
-    current.glowX += (target.glowX - current.glowX) * 0.08;
-    current.glowY += (target.glowY - current.glowY) * 0.08;
-    current.cursorX += (target.cursorX - current.cursorX) * 0.08;
-    current.cursorY += (target.cursorY - current.cursorY) * 0.08;
+  function getPhotoBounds() {
+    const side = Math.max(24, (rect.width - 1180) / 2);
+    const top = rect.width < 1024 ? rect.height * 0.22 : rect.height * 0.17;
+    return {
+      x: side,
+      y: top,
+      width: rect.width - side * 2,
+      height: Math.min(540, rect.height * (rect.width < 1024 ? 0.48 : 0.64))
+    };
+  }
 
-    hero.style.setProperty("--hero-x", `${current.x.toFixed(2)}px`);
-    hero.style.setProperty("--hero-y", `${current.y.toFixed(2)}px`);
-    hero.style.setProperty("--hero-tilt-x", `${current.tiltX.toFixed(3)}deg`);
-    hero.style.setProperty("--hero-tilt-y", `${current.tiltY.toFixed(3)}deg`);
-    hero.style.setProperty("--hero-glow-x", `${current.glowX.toFixed(2)}%`);
-    hero.style.setProperty("--hero-glow-y", `${current.glowY.toFixed(2)}%`);
+  function drawCover(drawContext, source, bounds) {
+    const sourceRatio = source.width / source.height;
+    const boundsRatio = bounds.width / bounds.height;
+    let sourceWidth = source.width;
+    let sourceHeight = source.height;
+    let sourceX = 0;
+    let sourceY = 0;
+
+    if (sourceRatio > boundsRatio) {
+      sourceWidth = source.height * boundsRatio;
+      sourceX = (source.width - sourceWidth) * 0.58;
+    } else {
+      sourceHeight = source.width / boundsRatio;
+      sourceY = (source.height - sourceHeight) * 0.5;
+    }
+
+    drawContext.drawImage(source, sourceX, sourceY, sourceWidth, sourceHeight, bounds.x, bounds.y, bounds.width, bounds.height);
+  }
+
+  function resizeCanvas() {
+    rect = hero.getBoundingClientRect();
+    pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const width = Math.max(1, Math.round(rect.width * pixelRatio));
+    const height = Math.max(1, Math.round(rect.height * pixelRatio));
+
+    [canvas, maskCanvas, photoCanvas].forEach((item) => {
+      item.width = width;
+      item.height = height;
+    });
+
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+    [context, maskContext, photoContext].forEach((drawContext) => {
+      drawContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    });
+  }
+
+  function renderPhotoLayer() {
+    photoContext.clearRect(0, 0, rect.width, rect.height);
+    if (!image.complete || !image.naturalWidth) return;
+
+    const bounds = getPhotoBounds();
+    drawCover(photoContext, image, bounds);
+
+    const veil = photoContext.createLinearGradient(bounds.x, 0, bounds.x + bounds.width, 0);
+    veil.addColorStop(0, "rgba(240,237,227,.02)");
+    veil.addColorStop(0.18, "rgba(240,237,227,.08)");
+    veil.addColorStop(0.82, "rgba(240,237,227,.24)");
+    veil.addColorStop(1, "rgba(240,237,227,.48)");
+    photoContext.fillStyle = veil;
+    photoContext.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+  }
+
+  function paintRevealSlash() {
+    const dx = pointer.x - pointer.lastX;
+    const dy = pointer.y - pointer.lastY;
+    const speed = Math.hypot(dx, dy);
+    const angle = speed > 0.8 ? Math.atan2(dy, dx) : -0.22;
+    const length = clamp(rect.width * 0.42 + speed * 9, 260, 760);
+    const thickness = clamp(rect.height * 0.15 + speed * 1.7, 105, 230);
+
+    maskContext.save();
+    maskContext.translate(pointer.x, pointer.y);
+    maskContext.rotate(angle - 0.16);
+    maskContext.scale(length / thickness, 1);
+
+    const gradient = maskContext.createRadialGradient(0, 0, thickness * 0.05, 0, 0, thickness * 0.5);
+    gradient.addColorStop(0, "rgba(255,255,255,.98)");
+    gradient.addColorStop(0.45, "rgba(255,255,255,.72)");
+    gradient.addColorStop(0.72, "rgba(255,255,255,.24)");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+    maskContext.fillStyle = gradient;
+    maskContext.beginPath();
+    maskContext.arc(0, 0, thickness * 0.5, 0, Math.PI * 2);
+    maskContext.fill();
+    maskContext.restore();
+  }
+
+  function render() {
+    current.cursorX += (target.cursorX - current.cursorX) * 0.1;
+    current.cursorY += (target.cursorY - current.cursorY) * 0.1;
+    current.x += (target.x - current.x) * 0.1;
+    current.y += (target.y - current.y) * 0.1;
+
     hero.style.setProperty("--hero-cursor-x", `${current.cursorX.toFixed(2)}%`);
     hero.style.setProperty("--hero-cursor-y", `${current.cursorY.toFixed(2)}%`);
+    hero.style.setProperty("--hero-x", `${current.x.toFixed(2)}px`);
+    hero.style.setProperty("--hero-y", `${current.y.toFixed(2)}px`);
+
+    maskContext.globalCompositeOperation = "destination-out";
+    maskContext.fillStyle = pointer.active ? "rgba(0,0,0,.022)" : "rgba(0,0,0,.055)";
+    maskContext.fillRect(0, 0, rect.width, rect.height);
+    maskContext.globalCompositeOperation = "source-over";
+
+    if (pointer.active) {
+      pointer.lastX += (pointer.x - pointer.lastX) * 0.2;
+      pointer.lastY += (pointer.y - pointer.lastY) * 0.2;
+      paintRevealSlash();
+    }
+
+    context.clearRect(0, 0, rect.width, rect.height);
+    context.drawImage(photoCanvas, 0, 0, rect.width, rect.height);
+    context.globalCompositeOperation = "destination-in";
+    context.drawImage(maskCanvas, 0, 0, rect.width, rect.height);
+    context.globalCompositeOperation = "source-over";
 
     frame = requestAnimationFrame(render);
   }
 
-  hero.addEventListener("pointermove", (event) => {
+  function updatePointer(event) {
     if (event.pointerType === "touch") return;
-    const rect = hero.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-    const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    pointer.x = x;
+    pointer.y = y;
+    if (!pointer.active) {
+      pointer.lastX = x;
+      pointer.lastY = y;
+    }
+    pointer.active = true;
+    hero.classList.add("is-revealing");
+    target.cursorX = (x / rect.width) * 100;
+    target.cursorY = (y / rect.height) * 100;
+    target.x = ((x / rect.width) - 0.5) * 18;
+    target.y = ((y / rect.height) - 0.5) * 14;
+  }
 
-    target.x = x * 28;
-    target.y = y * 20;
-    target.tiltX = y * -1.4;
-    target.tiltY = x * 1.8;
-    target.glowX = 50 + x * 18;
-    target.glowY = 42 + y * 14;
-    target.cursorX = ((event.clientX - rect.left) / rect.width) * 100;
-    target.cursorY = ((event.clientY - rect.top) / rect.height) * 100;
-  }, { passive: true });
+  function leavePointer() {
+    pointer.active = false;
+    hero.classList.remove("is-revealing");
+    Object.assign(target, { cursorX: 50, cursorY: 45, x: 0, y: 0 });
+  }
 
-  hero.addEventListener("pointerleave", () => {
-    Object.assign(target, { x: 0, y: 0, tiltX: 0, tiltY: 0, glowX: 50, glowY: 42, cursorX: 50, cursorY: 45 });
-  });
-
+  image.addEventListener("load", renderPhotoLayer, { once: true });
+  resizeCanvas();
+  renderPhotoLayer();
   frame = requestAnimationFrame(render);
+
+  hero.addEventListener("pointermove", updatePointer, { passive: true });
+  hero.addEventListener("pointerenter", updatePointer, { passive: true });
+  hero.addEventListener("pointerleave", leavePointer);
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+    renderPhotoLayer();
+  }, { passive: true });
   window.addEventListener("beforeunload", () => cancelAnimationFrame(frame), { once: true });
 }
 
