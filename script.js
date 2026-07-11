@@ -413,13 +413,11 @@ function initHeroHoverMotion() {
   let frame = 0;
 
   function getPhotoBounds() {
-    const side = Math.max(24, (rect.width - 1180) / 2);
-    const top = rect.width < 1024 ? rect.height * 0.22 : rect.height * 0.17;
     return {
-      x: side,
-      y: top,
-      width: rect.width - side * 2,
-      height: Math.min(540, rect.height * (rect.width < 1024 ? 0.48 : 0.64))
+      x: 0,
+      y: 0,
+      width: rect.width,
+      height: rect.height
     };
   }
 
@@ -468,10 +466,10 @@ function initHeroHoverMotion() {
     drawCover(photoContext, image, bounds);
 
     const veil = photoContext.createLinearGradient(bounds.x, 0, bounds.x + bounds.width, 0);
-    veil.addColorStop(0, "rgba(240,237,227,.02)");
-    veil.addColorStop(0.18, "rgba(240,237,227,.08)");
-    veil.addColorStop(0.82, "rgba(240,237,227,.24)");
-    veil.addColorStop(1, "rgba(240,237,227,.48)");
+    veil.addColorStop(0, "rgba(240,237,227,.01)");
+    veil.addColorStop(0.18, "rgba(240,237,227,.05)");
+    veil.addColorStop(0.82, "rgba(240,237,227,.2)");
+    veil.addColorStop(1, "rgba(240,237,227,.36)");
     photoContext.fillStyle = veil;
     photoContext.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
   }
