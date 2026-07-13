@@ -276,7 +276,6 @@ footer { padding: 32px 0; background: #0e0e0c; color: rgba(255,255,255,.52); bor
   .brand small { display: none; }
   .hero { min-height: 720px; height: 100svh; align-items: center; padding: 76px 0 20px; }
   .hero::after { content: none; }
-  .hero-reveal-canvas { display: none; }
   .hero-shade { display: none; }
   .hero-inner { min-height: calc(100svh - 108px); padding-top: 14px; }
   .hero-copy { padding-left: 18px; padding-right: 18px; }

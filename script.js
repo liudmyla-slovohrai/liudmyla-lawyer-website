@@ -411,6 +411,7 @@ function initHeroHoverMotion() {
   let rect = hero.getBoundingClientRect();
   let pixelRatio = 1;
   let frame = 0;
+  let touchRevealTimer = 0;
 
   function getPhotoBounds() {
     return {
@@ -529,10 +530,33 @@ function initHeroHoverMotion() {
     target.y = ((y / rect.height) - 0.5) * 14;
   }
 
+  function updateTouch(event) {
+    const touch = event.touches && event.touches[0];
+    if (!touch) return;
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    clearTimeout(touchRevealTimer);
+    pointer.active = true;
+    hero.classList.add("is-revealing");
+    target.cursorX = (x / rect.width) * 100;
+    target.cursorY = (y / rect.height) * 100;
+    target.x = ((x / rect.width) - 0.5) * 18;
+    target.y = ((y / rect.height) - 0.5) * 14;
+  }
+
   function leavePointer() {
     pointer.active = false;
     hero.classList.remove("is-revealing");
     Object.assign(target, { cursorX: 50, cursorY: 45, x: 0, y: 0 });
+  }
+
+  function leaveTouch() {
+    pointer.active = false;
+    touchRevealTimer = window.setTimeout(() => {
+      hero.classList.remove("is-revealing");
+      Object.assign(target, { cursorX: 50, cursorY: 45, x: 0, y: 0 });
+    }, 900);
   }
 
   image.addEventListener("load", renderPhotoLayer, { once: true });
@@ -543,12 +567,17 @@ function initHeroHoverMotion() {
   hero.addEventListener("pointermove", updatePointer, { passive: true });
   hero.addEventListener("pointerenter", updatePointer, { passive: true });
   hero.addEventListener("pointerleave", leavePointer);
+  hero.addEventListener("touchstart", updateTouch, { passive: true });
+  hero.addEventListener("touchmove", updateTouch, { passive: true });
+  hero.addEventListener("touchend", leaveTouch, { passive: true });
+  hero.addEventListener("touchcancel", leaveTouch, { passive: true });
   window.addEventListener("resize", () => {
     resizeCanvas();
     renderPhotoLayer();
   }, { passive: true });
   window.addEventListener("beforeunload", () => {
     cancelAnimationFrame(frame);
+    clearTimeout(touchRevealTimer);
     if (typeof stopFluid === "function") stopFluid();
     fluidCanvas.remove();
   }, { once: true });
